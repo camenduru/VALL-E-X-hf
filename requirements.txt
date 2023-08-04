@@ -1,0 +1,9 @@
+numpy
+torch
+torchaudio
+encodec
+pyopenjtalk
+pypinyin
+inflect
+cn2an
+eng_to_ipa

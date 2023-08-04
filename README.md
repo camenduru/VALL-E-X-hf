@@ -1,6 +1,6 @@
 ---
 title: VALL E X
-emoji: 📊
+emoji: 🎙
 colorFrom: green
 colorTo: purple
 sdk: gradio
