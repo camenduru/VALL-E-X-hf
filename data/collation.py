@@ -4,8 +4,6 @@ from typing import List, Tuple
 import numpy as np
 import torch
 
-from utils import SymbolTable
-
 
 class TextTokenCollater:
     """Collate list of text tokens
