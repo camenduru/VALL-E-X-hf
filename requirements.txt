@@ -2,6 +2,7 @@ numpy
 torch
 torchaudio
 encodec
+unidecode
 pyopenjtalk
 pypinyin
 inflect
