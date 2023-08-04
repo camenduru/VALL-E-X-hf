@@ -1,6 +1,7 @@
 numpy
 torch
 torchaudio
+tokenizers
 encodec
 unidecode
 pyopenjtalk
