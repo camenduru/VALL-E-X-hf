@@ -5,7 +5,8 @@ import pathlib
 import time
 import tempfile
 from pathlib import Path
-pathlib.PosixPath = pathlib.PosixPath
+temp = pathlib.WindowsPath
+pathlib.WindowsPath = pathlib.PosixPath
 os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 import torch
 import torchaudio
