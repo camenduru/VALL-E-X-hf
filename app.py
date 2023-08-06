@@ -97,7 +97,7 @@ model.eval()
 audio_tokenizer = AudioTokenizer(device)
 
 # ASR
-whisper_model = whisper.load_model("medium").cpu()
+whisper_model = whisper.load_model("medium")
 
 def clear_prompts():
     try:
@@ -125,7 +125,7 @@ def transcribe_one(model, audio_path):
     print(f"Detected language: {max(probs, key=probs.get)}")
     lang = max(probs, key=probs.get)
     # decode the audio
-    options = whisper.DecodingOptions(temperature=1.0, best_of=5, fp16=False if device == torch.device("cpu") else True, sample_len=100)
+    options = whisper.DecodingOptions(temperature=1.0, best_of=5, fp16=False if device == torch.device("cpu") else True, sample_len=150)
     result = whisper.decode(model, mel, options)
 
     # print the recognized text
@@ -168,7 +168,6 @@ def make_npz_prompt(name, uploaded_audio, recorded_audio):
 def make_prompt(name, wav, sr, save=True):
 
     global whisper_model
-    whisper_model.to(device)
     if not isinstance(wav, torch.FloatTensor):
         wav = torch.tensor(wav)
     if wav.abs().max() > 1:
@@ -188,7 +187,6 @@ def make_prompt(name, wav, sr, save=True):
         os.remove(f"./prompts/{name}.wav")
         os.remove(f"./prompts/{name}.txt")
 
-    whisper_model.cpu()
     torch.cuda.empty_cache()
     return text, lang
 
