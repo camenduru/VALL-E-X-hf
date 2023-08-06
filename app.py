@@ -125,7 +125,7 @@ def transcribe_one(model, audio_path):
     print(f"Detected language: {max(probs, key=probs.get)}")
     lang = max(probs, key=probs.get)
     # decode the audio
-    options = whisper.DecodingOptions(beam_size=5, fp16=False if device == torch.device("cpu") else True)
+    options = whisper.DecodingOptions(temperature=1.0, best_of=5, fp16=False if device == torch.device("cpu") else True, sample_len=100)
     result = whisper.decode(model, mel, options)
 
     # print the recognized text
