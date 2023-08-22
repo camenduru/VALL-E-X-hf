@@ -14,6 +14,7 @@ jieba
 eng_to_ipa
 jieba
 SudachiPy
+nltk
 openai-whisper
 phonemizer
 matplotlib
