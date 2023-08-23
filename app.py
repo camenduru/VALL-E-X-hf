@@ -132,7 +132,7 @@ def make_npz_prompt(name, uploaded_audio, recorded_audio, transcript_content):
     if wav_pr.abs().max() > 1:
         wav_pr /= wav_pr.abs().max()
     if wav_pr.size(-1) == 2:
-        wav_pr = wav_pr.mean(-1, keepdim=False)
+        wav_pr = wav_pr[:, 0]
     if wav_pr.ndim == 1:
         wav_pr = wav_pr.unsqueeze(0)
     assert wav_pr.ndim and wav_pr.size(0) == 1
@@ -204,7 +204,7 @@ def infer_from_audio(text, language, accent, audio_prompt, record_audio_prompt, 
     if wav_pr.abs().max() > 1:
         wav_pr /= wav_pr.abs().max()
     if wav_pr.size(-1) == 2:
-        wav_pr = wav_pr.mean(-1, keepdim=False)
+        wav_pr = wav_pr[:, 0]
     if wav_pr.ndim == 1:
         wav_pr = wav_pr.unsqueeze(0)
     assert wav_pr.ndim and wav_pr.size(0) == 1
