@@ -508,7 +508,7 @@ def main():
                         inputs=[textbox, language_dropdown, accent_dropdown, upload_audio_prompt, record_audio_prompt, textbox_transcript],
                         outputs=[text_output, audio_output],
                         fn=infer_from_audio,
-                        cache_examples=True,)
+                        cache_examples=False,)
         with gr.Tab("Make prompt"):
             gr.Markdown(make_prompt_md)
             with gr.Row():
@@ -533,7 +533,7 @@ def main():
                         inputs=[textbox2, upload_audio_prompt_2, record_audio_prompt_2, textbox_transcript2],
                         outputs=[text_output_2, prompt_output_2],
                         fn=make_npz_prompt,
-                        cache_examples=True,)
+                        cache_examples=False,)
         with gr.Tab("Infer from prompt"):
             gr.Markdown(infer_from_prompt_md)
             with gr.Row():
@@ -558,7 +558,7 @@ def main():
                         inputs=[textbox_3, language_dropdown_3, accent_dropdown_3, preset_dropdown_3, prompt_file],
                         outputs=[text_output_3, audio_output_3],
                         fn=infer_from_prompt,
-                        cache_examples=True,)
+                        cache_examples=False,)
         with gr.Tab("Infer long text"):
             gr.Markdown(long_text_md)
             with gr.Row():
