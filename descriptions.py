@@ -1,6 +1,12 @@
 top_md = """
 # VALL-E X  
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1yyD_sz531QntLKowMHo-XxorsFBCfKul?usp=sharing)
+<a href="https://huggingface.co/spaces/facebook/MusicGen?duplicate=true"
+    style="display: inline-block;margin-top: .5em;margin-right: .25em;" target="_blank">
+<img style="margin-bottom: 0em;display: inline;margin-top: -.25em;"
+    src="https://bit.ly/3gLdBN6" alt="Duplicate Space"></a> or <a href="https://colab.research.google.com/drive/1yyD_sz531QntLKowMHo-XxorsFBCfKul?usp=sharing"
+    style="display: inline-block;margin-top: .5em;margin-right: .25em;" target="_blank">
+<img style="margin-bottom: 0em;display: inline;margin-top: -.25em;"
+    src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>to skip the queue.</p>
 VALL-E X can synthesize high-quality personalized speech with only a 3-second enrolled recording of 
 an unseen speaker as an acoustic prompt, even in another language for a monolingual speaker.<br>
 This implementation supports zero-shot, mono-lingual/cross-lingual text-to-speech functionality of three languages (English, Chinese, Japanese)<br>  

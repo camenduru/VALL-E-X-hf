@@ -18,4 +18,5 @@ nltk
 openai-whisper
 phonemizer
 matplotlib
+psutil
 gradio

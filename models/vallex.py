@@ -33,6 +33,15 @@ from modules.transformer import (
 
 from .macros import NUM_AUDIO_TOKENS, NUM_TEXT_TOKENS
 
+import psutil
+def get_memory_usage():
+    process = psutil.Process()
+    memory_info = process.memory_info()
+
+    memory_used = memory_info.rss
+    memory_used_mb = memory_used / (1024 * 1024)
+
+    return memory_used_mb
 
 class Transpose(nn.Identity):
     """(N, T, D) -> (N, D, T)"""
@@ -572,6 +581,9 @@ class VALLE(VALLF):
                     )
 
                 print(f"VALL-E EOS [{prompts.shape[1]} -> {y.shape[1]}]")
+
+                memory_used = get_memory_usage()
+                print(f"Current memory used: {memory_used:.2f} MB")
                 break
 
             y = torch.concat([y, samples], dim=1)

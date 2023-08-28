@@ -44,8 +44,8 @@ text_tokenizer = PhonemeBpeTokenizer(tokenizer_path="./utils/g2p/bpe_69.json")
 text_collater = get_text_token_collater()
 
 device = torch.device("cpu")
-if torch.cuda.is_available():
-    device = torch.device("cuda", 0)
+# if torch.cuda.is_available():
+#     device = torch.device("cuda", 0)
 
 # VALL-E-X model
 model = VALLE(

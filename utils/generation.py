@@ -2,6 +2,7 @@ import os
 import torch
 import gdown
 import logging
+import psutil
 import langid
 langid.set_languages(['en', 'zh', 'ja'])
 
