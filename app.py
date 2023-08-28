@@ -5,6 +5,7 @@ import pathlib
 import time
 import tempfile
 import platform
+import gc
 if platform.system().lower() == 'windows':
     temp = pathlib.PosixPath
     pathlib.PosixPath = pathlib.WindowsPath
@@ -113,6 +114,9 @@ def transcribe_one(model, audio_path):
     text_pr = result.text
     if text_pr.strip(" ")[-1] not in "?!.,。，？！。、":
         text_pr += "."
+
+    # delete all variables
+    del audio, mel, probs, result
     return lang, text_pr
 
 def make_npz_prompt(name, uploaded_audio, recorded_audio, transcript_content):
@@ -154,6 +158,10 @@ def make_npz_prompt(name, uploaded_audio, recorded_audio, transcript_content):
     # save as npz file
     np.savez(os.path.join(tempfile.gettempdir(), f"{name}.npz"),
              audio_tokens=audio_tokens, text_tokens=text_tokens, lang_code=lang2code[lang_pr])
+
+    # delete all variables
+    del audio_tokens, text_tokens, phonemes, lang_pr, text_pr, wav_pr, sr, uploaded_audio, recorded_audio
+
     return message, os.path.join(tempfile.gettempdir(), f"{name}.npz")
 
 
@@ -176,6 +184,8 @@ def make_prompt(name, wav, sr, save=True):
     if not save:
         os.remove(f"./prompts/{name}.wav")
         os.remove(f"./prompts/{name}.txt")
+    # delete all variables
+    del lang_token, wav, sr
 
     return text, lang
 
@@ -250,6 +260,8 @@ def infer_from_audio(text, language, accent, audio_prompt, record_audio_prompt, 
     )
 
     message = f"text prompt: {text_pr}\nsythesized text: {text}"
+    # delete all variables
+    del audio_prompts, text_tokens, text_prompts, phone_tokens, encoded_frames, wav_pr, sr, audio_prompt, record_audio_prompt, transcript_content
     return message, (24000, samples[0][0].cpu().numpy())
 
 @torch.no_grad()
@@ -306,6 +318,9 @@ def infer_from_prompt(text, language, accent, preset_prompt, prompt_file):
     )
 
     message = f"sythesized text: {text}"
+
+    # delete all variables
+    del audio_prompts, text_tokens, text_prompts, phone_tokens, encoded_frames, prompt_file, preset_prompt
     return message, (24000, samples[0][0].cpu().numpy())
 
 
@@ -439,6 +454,7 @@ def infer_long_text(text, preset_prompt, prompt=None, language='auto', accent='n
             [(complete_tokens, None)]
         )
         message = f"Cut into {len(sentences)} sentences"
+
         return message, (24000, samples[0][0].cpu().numpy())
     else:
         raise ValueError(f"No such mode {mode}")
