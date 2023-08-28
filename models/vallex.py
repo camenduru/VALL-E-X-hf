@@ -14,6 +14,7 @@
 
 import random
 from typing import Dict, Iterator, List, Tuple, Union
+import gc
 
 import numpy as np
 import torch
@@ -462,6 +463,7 @@ class VALLE(VALLF):
         **kwargs,
     ):
         raise NotImplementedError
+
     def inference(
         self,
         x: torch.Tensor,
@@ -674,6 +676,7 @@ class VALLE(VALLF):
                     y_emb[:, prefix_len:] += embedding_layer(samples)
 
         assert len(codes) == self.num_quantizers
+        gc.collect()
         return torch.stack(codes, dim=-1)
 
     def continual(

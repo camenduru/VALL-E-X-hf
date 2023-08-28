@@ -116,7 +116,6 @@ def transcribe_one(model, audio_path):
     return lang, text_pr
 
 def make_npz_prompt(name, uploaded_audio, recorded_audio, transcript_content):
-    global model, text_collater, text_tokenizer, audio_tokenizer
     clear_prompts()
     audio_prompt = uploaded_audio if uploaded_audio is not None else recorded_audio
     sr, wav_pr = audio_prompt
@@ -159,7 +158,6 @@ def make_npz_prompt(name, uploaded_audio, recorded_audio, transcript_content):
 
 
 def make_prompt(name, wav, sr, save=True):
-    global whisper_model
     if not isinstance(wav, torch.FloatTensor):
         wav = torch.tensor(wav)
     if wav.abs().max() > 1:
@@ -185,7 +183,6 @@ def make_prompt(name, wav, sr, save=True):
 def infer_from_audio(text, language, accent, audio_prompt, record_audio_prompt, transcript_content):
     if len(text) > 150:
         return "Rejected, Text too long (should be less than 150 characters)", None
-    global model, text_collater, text_tokenizer, audio_tokenizer
     audio_prompt = audio_prompt if audio_prompt is not None else record_audio_prompt
     sr, wav_pr = audio_prompt
     if len(wav_pr) / sr > 15:
