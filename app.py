@@ -35,14 +35,7 @@ from examples import *
 
 import gradio as gr
 import whisper
-import multiprocessing
 
-thread_count = multiprocessing.cpu_count()
-
-print("Use",thread_count,"cpu cores for computing")
-
-torch.set_num_threads(thread_count)
-torch.set_num_interop_threads(thread_count)
 torch._C._jit_set_profiling_executor(False)
 torch._C._jit_set_profiling_mode(False)
 torch._C._set_graph_executor_optimize(False)
@@ -66,11 +59,12 @@ model = VALLE(
         nar_scale_factor=1.0,
         prepend_bos=True,
         num_quantizers=NUM_QUANTIZERS,
-    )
+    ).to(device)
 checkpoint = torch.load("./epoch-10.pt", map_location='cpu')
 missing_keys, unexpected_keys = model.load_state_dict(
     checkpoint["model"], strict=True
 )
+del checkpoint
 assert not missing_keys
 model.eval()
 
@@ -78,7 +72,7 @@ model.eval()
 audio_tokenizer = AudioTokenizer(device)
 
 # ASR
-whisper_model = whisper.load_model("medium").cpu()
+whisper_model = whisper.load_model("medium").to(device)
 
 # Voice Presets
 preset_list = os.walk("./presets/").__next__()[2]
@@ -166,7 +160,6 @@ def make_npz_prompt(name, uploaded_audio, recorded_audio, transcript_content):
 
 def make_prompt(name, wav, sr, save=True):
     global whisper_model
-    whisper_model.to(device)
     if not isinstance(wav, torch.FloatTensor):
         wav = torch.tensor(wav)
     if wav.abs().max() > 1:
@@ -186,8 +179,6 @@ def make_prompt(name, wav, sr, save=True):
         os.remove(f"./prompts/{name}.wav")
         os.remove(f"./prompts/{name}.txt")
 
-    whisper_model.cpu()
-    torch.cuda.empty_cache()
     return text, lang
 
 @torch.no_grad()
@@ -195,7 +186,6 @@ def infer_from_audio(text, language, accent, audio_prompt, record_audio_prompt, 
     if len(text) > 150:
         return "Rejected, Text too long (should be less than 150 characters)", None
     global model, text_collater, text_tokenizer, audio_tokenizer
-    model.to(device)
     audio_prompt = audio_prompt if audio_prompt is not None else record_audio_prompt
     sr, wav_pr = audio_prompt
     if len(wav_pr) / sr > 15:
@@ -223,9 +213,6 @@ def infer_from_audio(text, language, accent, audio_prompt, record_audio_prompt, 
         lang_token = langdropdown2token[language]
     lang = token2lang[lang_token]
     text = lang_token + text + lang_token
-
-    # onload model
-    model.to(device)
 
     # tokenize audio
     encoded_frames = tokenize_audio(audio_tokenizer, (wav_pr, sr))
@@ -265,10 +252,6 @@ def infer_from_audio(text, language, accent, audio_prompt, record_audio_prompt, 
         [(encoded_frames.transpose(2, 1), None)]
     )
 
-    # offload model
-    model.to('cpu')
-    torch.cuda.empty_cache()
-
     message = f"text prompt: {text_pr}\nsythesized text: {text}"
     return message, (24000, samples[0][0].cpu().numpy())
 
@@ -277,7 +260,6 @@ def infer_from_prompt(text, language, accent, preset_prompt, prompt_file):
     if len(text) > 150:
         return "Rejected, Text too long (should be less than 150 characters)", None
     clear_prompts()
-    model.to(device)
     # text to synthesize
     if language == 'auto-detect':
         lang_token = lang2token[langid.classify(text)[0]]
@@ -325,8 +307,6 @@ def infer_from_prompt(text, language, accent, preset_prompt, prompt_file):
     samples = audio_tokenizer.decode(
         [(encoded_frames.transpose(2, 1), None)]
     )
-    model.to('cpu')
-    torch.cuda.empty_cache()
 
     message = f"sythesized text: {text}"
     return message, (24000, samples[0][0].cpu().numpy())
@@ -344,7 +324,6 @@ def infer_long_text(text, preset_prompt, prompt=None, language='auto', accent='n
         return "Rejected, Text too long (should be less than 1000 characters)", None
     mode = 'fixed-prompt'
     global model, audio_tokenizer, text_tokenizer, text_collater
-    model.to(device)
     if (prompt is None or prompt == "") and preset_prompt == "":
         mode = 'sliding-window'  # If no prompt is given, use sliding-window mode
     sentences = split_text_into_sentences(text)
@@ -416,7 +395,6 @@ def infer_long_text(text, preset_prompt, prompt=None, language='auto', accent='n
         samples = audio_tokenizer.decode(
             [(complete_tokens, None)]
         )
-        model.to('cpu')
         message = f"Cut into {len(sentences)} sentences"
         return message, (24000, samples[0][0].cpu().numpy())
     elif mode == "sliding-window":
@@ -463,7 +441,6 @@ def infer_long_text(text, preset_prompt, prompt=None, language='auto', accent='n
         samples = audio_tokenizer.decode(
             [(complete_tokens, None)]
         )
-        model.to('cpu')
         message = f"Cut into {len(sentences)} sentences"
         return message, (24000, samples[0][0].cpu().numpy())
     else:
