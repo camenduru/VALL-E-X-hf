@@ -676,7 +676,7 @@ class VALLE(VALLF):
                     y_emb[:, prefix_len:] += embedding_layer(samples)
 
         assert len(codes) == self.num_quantizers
-        del text_language_id, prompt_language_id, y_emb, x, y_pos, xy_pos, xy_dec, logits, samples
+        del text_language_id, prompt_language_id, y_emb, x, y_pos, xy_pos, xy_dec, logits, samples, kv_cache, x_attn_mask, y_attn_mask, xy_attn_mask
         gc.collect()
         return torch.stack(codes, dim=-1)
 
