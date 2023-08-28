@@ -117,6 +117,7 @@ def transcribe_one(model, audio_path):
 
     # delete all variables
     del audio, mel, probs, result
+    gc.collect()
     return lang, text_pr
 
 def make_npz_prompt(name, uploaded_audio, recorded_audio, transcript_content):
@@ -161,7 +162,7 @@ def make_npz_prompt(name, uploaded_audio, recorded_audio, transcript_content):
 
     # delete all variables
     del audio_tokens, text_tokens, phonemes, lang_pr, text_pr, wav_pr, sr, uploaded_audio, recorded_audio
-
+    gc.collect()
     return message, os.path.join(tempfile.gettempdir(), f"{name}.npz")
 
 
@@ -186,7 +187,7 @@ def make_prompt(name, wav, sr, save=True):
         os.remove(f"./prompts/{name}.txt")
     # delete all variables
     del lang_token, wav, sr
-
+    gc.collect()
     return text, lang
 
 @torch.no_grad()
@@ -262,6 +263,7 @@ def infer_from_audio(text, language, accent, audio_prompt, record_audio_prompt, 
     message = f"text prompt: {text_pr}\nsythesized text: {text}"
     # delete all variables
     del audio_prompts, text_tokens, text_prompts, phone_tokens, encoded_frames, wav_pr, sr, audio_prompt, record_audio_prompt, transcript_content
+    gc.collect()
     return message, (24000, samples[0][0].cpu().numpy())
 
 @torch.no_grad()
@@ -321,6 +323,7 @@ def infer_from_prompt(text, language, accent, preset_prompt, prompt_file):
 
     # delete all variables
     del audio_prompts, text_tokens, text_prompts, phone_tokens, encoded_frames, prompt_file, preset_prompt
+    gc.collect()
     return message, (24000, samples[0][0].cpu().numpy())
 
 
