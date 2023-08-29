@@ -192,7 +192,6 @@ def make_prompt(name, wav, sr, save=True):
 
 @torch.no_grad()
 def infer_from_audio(text, language, accent, audio_prompt, record_audio_prompt, transcript_content):
-    text = text.replace("\n", "")
     if len(text) > 150:
         return "Rejected, Text too long (should be less than 150 characters)", None
     audio_prompt = audio_prompt if audio_prompt is not None else record_audio_prompt
@@ -269,7 +268,6 @@ def infer_from_audio(text, language, accent, audio_prompt, record_audio_prompt, 
 
 @torch.no_grad()
 def infer_from_prompt(text, language, accent, preset_prompt, prompt_file):
-    text = text.replace("\n", "")
     if len(text) > 150:
         return "Rejected, Text too long (should be less than 150 characters)", None
     clear_prompts()
