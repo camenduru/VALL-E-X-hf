@@ -573,7 +573,7 @@ def main():
                               inputs=[textbox_4, preset_dropdown_4, prompt_file_4, language_dropdown_4, accent_dropdown_4],
                               outputs=[text_output_4, audio_output_4])
 
-    app.launch()
+    app.launch(share=True)
 
 if __name__ == "__main__":
     formatter = (
